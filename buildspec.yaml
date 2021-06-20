@@ -1,10 +1,10 @@
 version: 0.2
 env:
   secrets-manager:
-    LOGIN: yusufs/example-code:sonartoken
-    HOST: yusufs/example-code:HOST
-    Organization: yusufs/example-code:Organization
-    Project: yusufs/example-code:Project
+    LOGIN: yusufscott/example-code:sonartoken
+    HOST: yusufscott/example-code:HOST
+    Organization: yusufscott/example-code:Organization
+    Project: yusufscott/example-code:Project
 phases:
   install:
     commands:
