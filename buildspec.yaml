@@ -17,6 +17,7 @@ phases:
       - apt-get update && apt-get install terraform -y --no-install-recommends ca-certificates
       - pip install terraform-compliance
       # Anchore installation
+      - apt-install urllib3
       - curl https://engine.anchore.io/docs/quickstart/docker-compose.yaml > docker-compose.yaml
       - docker-compose up -d
       - pip install anchorecli
