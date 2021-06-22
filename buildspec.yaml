@@ -30,7 +30,7 @@ phases:
       - export PATH=$PATH:/sonar-scanner-3.3.0.1492-linux/bin/
       # OWASP Zap installation
       - echo $docker_pass
-      - docker login --username $DOCKER_USER --password-stdin $DOCKER_PASSWORD
+      - docker login --username $DOCKER_USER --password $DOCKER_PASSWORD
       - docker pull owasp/zap2docker-stable
       - docker run -u zap -p 8080:8080 -i owasp/zap2docker-stable zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true -config api.key=$docker_key
       - docker network create zapnet
