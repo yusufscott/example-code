@@ -1,10 +1,10 @@
 version: 0.2
 env:
   secrets-manager:
-    LOGIN: yusufscott/example-code:token
-    HOST: yusufscott/example-code:host
-    Organization: yusufscott/example-code:organization
-    Project: yusufscott/example-code:project
+    LOGIN: "yusufscott/example-code:token"
+    HOST: "yusufscott/example-code:host"
+    Organization: "yusufscott/example-code:organization"
+    Project: "yusufscott/example-code:project"
 phases:
   install:
     commands:
