@@ -192,11 +192,6 @@ resource "aws_codebuild_project" "example" {
     compute_type                = "BUILD_GENERAL1_SMALL"
     image                       = "aws/codebuild/standard:5.0"
     type                        = "LINUX_CONTAINER"
-    environment_variable {
-        name = "DOCKER_LOGIN"
-        type = "SECRETS_MANAGER"
-        value = jsondecode(aws_secretsmanager_secret_version.docker_creds.secret_string)["password"]
-    }
   }
 
 
