@@ -12,15 +12,15 @@ phases:
     commands:
       # terraform-compliance installation
       #- sudo apt-get update && sudo apt-get upgrade -y --no-install-recommends ca-certificates
-      - apt-get update && apt-get install -y gnupg software-properties-common curl# --no-install-recommends ca-certificates
+      - apt-get update && apt-get install -y gnupg software-properties-common curl
       - curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
       - apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-      - apt-get update && apt-get install terraform -y# --no-install-recommends ca-certificates
+      - apt-get update && apt-get install terraform -y
       - pip install terraform-compliance
       # Grype installation
       - curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
       # SonarQube installation
-      - apt-get install -y jq# --no-install-recommends ca-certificates
+      - apt-get install -y jq
       - wget http://www-eu.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz
       - tar xzf apache-maven-3.5.4-bin.tar.gz
       - ln -s apache-maven-3.5.4 maven
