@@ -29,14 +29,13 @@ phases:
       - unzip ./sonar-scanner-cli-3.3.0.1492-linux.zip
       - export PATH=$PATH:/sonar-scanner-3.3.0.1492-linux/bin/
       # OWASP Zap installation
-      - apt-get install docker docker.io containerd runc docker-ce docker-ce-cli containerd.io -y
-      - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay2&
-      - timeout 15 sh -c "until docker info; do echo .; sleep 1; done"
+      #- apt-get install docker docker.io containerd runc docker-ce docker-ce-cli containerd.io -y
+      #- nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay2&
+      #- timeout 15 sh -c "until docker info; do echo .; sleep 1; done"
       #- docker-compose up -d
       - docker login --username $DOCKER_USER --password $DOCKER_PASSWORD
       - docker pull owasp/zap2docker-stable
-      #- ctr containers start owasp/zap2docker-stable
-      #- docker run -u zap -p 8080:8080 -i owasp/zap2docker-stable zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true -config api.key=$docker_key
+      - docker run -u zap -p 8080:8080 -i owasp/zap2docker-stable zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true -config api.key=$docker_key
       - docker network create zapnet
 
   build:
