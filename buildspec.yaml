@@ -11,12 +11,12 @@ phases:
       # terraform-compliance installation
       - sudo apt-get update && sudo apt-get upgrade -y --no-install-recommends ca-certificates
       - sudo apt-get install -y gnupg software-properties-common curl --no-install-recommends ca-certificates
-      - curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+      - curl -kfsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
       - sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
       - sudo apt-get update && sudo apt-get install terraform -y --no-install-recommends ca-certificates
       - pip install terraform-compliance
       # Anchore installation
-      - curl https://engine.anchore.io/docs/quickstart/docker-compose.yaml > docker-compose.yaml
+      - curl -k https://engine.anchore.io/docs/quickstart/docker-compose.yaml > docker-compose.yaml
       - docker-compose up -d
       - pip install anchorecli
       # SonarQube installation
