@@ -160,6 +160,15 @@ resource "aws_iam_role_policy" "audit_build_role_policy" {
                 "${aws_s3_bucket.audit_report_bucket.arn}",
                 "${aws_s3_bucket.audit_report_bucket.arn}/*"
             ]
+        },
+        {
+            Effect = "Allow",
+            Action = [
+                "secretsmanager:GetSecretValue"
+            ],
+            Resource = [
+                "arn:aws:secretsmanager:*:753641548906:secret:*"
+            ]
         }
     ]
   })
