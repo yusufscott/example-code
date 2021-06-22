@@ -2,6 +2,21 @@ provider "aws" {
     region = "us-west-2"
 }
 
+resource "aws_kms_key" "audit_key" {
+    description = "Key for encrypting audit pipeline resources"
+}
+
+resource "aws_secretsmanager_secret" "docker_login" {
+    name = "docker-login"
+    description = "Used to log into docker"
+    kms_key_id = aws_kms_key.audit_key.key_id
+}
+
+resource "aws_secretsmanager_secret_version" "docker_creds" {
+    secret_id = aws_secretsmanager_secret.docker_login.id
+    secret_string = jsonencode(var.docker_creds)
+}
+
 resource "aws_s3_bucket" "audit_report_bucket" {
     bucket = "yusufs-audit-report-bucket"
     acl = "private"
@@ -158,6 +173,7 @@ resource "aws_codebuild_project" "example" {
 
   artifacts {
     type = "S3"
+    location = aws_s3_bucket.audit_report_bucket.bucket
     name = "audit-report"
     namespace_type = "BUILD_ID"
     packaging = "ZIP"
@@ -167,7 +183,13 @@ resource "aws_codebuild_project" "example" {
     compute_type                = "BUILD_GENERAL1_SMALL"
     image                       = "ubuntu:latest"
     type                        = "LINUX_CONTAINER"
+    environment_variable {
+        name = "DOCKER_LOGIN"
+        type = "SECRETS_MANAGER"
+        value = jsondecode(aws_secretsmanager_secret_version.docker_creds.secret_string)["password"]
+    }
   }
+
 
   source {
     type            = "GITHUB"
@@ -204,7 +226,7 @@ resource "aws_codepipeline" "audit_pipeline" {
 
       configuration = {
         ConnectionArn = aws_codestarconnections_connection.code_base.arn
-        FullRepositoryId = "yusufs/example-code"
+        FullRepositoryId = "yusufscott/example-code"
         BranchName = "main"
       }
     }
