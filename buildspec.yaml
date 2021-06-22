@@ -29,7 +29,7 @@ phases:
       - unzip ./sonar-scanner-cli-3.3.0.1492-linux.zip
       - export PATH=$PATH:/sonar-scanner-3.3.0.1492-linux/bin/
       # OWASP Zap installation
-      - apt-get install docker docker.io containerd runc
+      - apt-get install docker docker.io containerd runc -y
       - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay2&
       - timeout 15 sh -c "until docker info; do echo .; sleep 1; done"
       #- docker-compose up -d
