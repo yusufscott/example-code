@@ -192,6 +192,7 @@ resource "aws_codebuild_project" "example" {
     compute_type                = "BUILD_GENERAL1_SMALL"
     image                       = "aws/codebuild/standard:5.0"
     type                        = "LINUX_CONTAINER"
+    privileged_mode             = true
   }
 
 
