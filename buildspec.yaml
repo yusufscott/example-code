@@ -1,7 +1,7 @@
 version: 0.2
-env:
-  secrets-manager:
-    docker_pass: "docker-login:password"
+#env:
+  #secrets-manager:
+    #docker_pass: "docker-login:password"
     #LOGIN: "yusufscott/example-code:token"
     #HOST: "yusufscott/example-code:host"
     #Organization: "yusufscott/example-code:organization"
