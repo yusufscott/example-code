@@ -1,5 +1,4 @@
 version: 0.2
-#trigger
 env:
   secrets-manager:
     docker_pass: "docker-login:password"
