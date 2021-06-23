@@ -1,5 +1,6 @@
 provider "aws" {
     region = "us-west-2"
+    #profile = "vr"
 }
 
 # resource "aws_kms_key" "audit_key" {
@@ -17,11 +18,37 @@ provider "aws" {
 #     secret_string = jsonencode(var.docker_creds)
 # }
 
+resource "aws_s3_bucket" "audit_report_log_bucket" {
+  bucket = "yusufs-audit-report-log-bucket"
+  acl    = "log-delivery-write"
+
+  server_side_encryption_configuration {
+    rule {
+        apply_server_side_encryption_by_default {
+            sse_algorithm = "aws:kms"
+        }
+    }
+  }
+}
+
 resource "aws_s3_bucket" "audit_report_bucket" {
     bucket = "yusufs-audit-report-bucket"
     acl = "private"
     versioning {
         enabled = true
+    }
+
+    logging {
+        target_bucket = aws_s3_bucket.audit_report_log_bucket.id
+        target_prefix = "log/"
+    }
+
+    server_side_encryption_configuration {
+        rule {
+            apply_server_side_encryption_by_default {
+                sse_algorithm = "aws:kms"
+            }
+        }
     }
 }
 
