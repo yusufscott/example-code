@@ -13,31 +13,28 @@ phases:
   install:
     commands:
       # terraform-compliance installation
-      #- sudo apt-get update && sudo apt-get upgrade -y --no-install-recommends ca-certificates
       - apt-get update && apt-get install -y gnupg software-properties-common curl
       - curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
       - apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
       - apt-get update && apt-get install terraform -y
       - pip install terraform-compliance
-      # Grype installation
-      - curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
-      # SonarQube installation
-      - apt-get install -y jq
-      - wget http://www-eu.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz
-      - tar xzf apache-maven-3.5.4-bin.tar.gz
-      - ln -s apache-maven-3.5.4 maven
-      - wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.3.0.1492-linux.zip
-      - unzip ./sonar-scanner-cli-3.3.0.1492-linux.zip
-      - export PATH=$PATH:/sonar-scanner-3.3.0.1492-linux/bin/
-      # OWASP Zap installation
-      #- docker login --username $DOCKER_USER --password $DOCKER_PASSWORD
-      - docker pull owasp/zap2docker-stable
-      - docker network create zapnet
-      - docker run -u zap -p 8080:8080 -i owasp/zap2docker-stable zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true -config api.key=$docker_key &
-      - docker ps
-      - docker network connect zapnet zap
-      # For generated reports
-      - mkdir reports
+      # # Grype installation
+      # - curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+      # # SonarQube installation
+      # - apt-get install -y jq
+      # - wget http://www-eu.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz
+      # - tar xzf apache-maven-3.5.4-bin.tar.gz
+      # - ln -s apache-maven-3.5.4 maven
+      # - wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.3.0.1492-linux.zip
+      # - unzip ./sonar-scanner-cli-3.3.0.1492-linux.zip
+      # - export PATH=$PATH:/sonar-scanner-3.3.0.1492-linux/bin/
+      # # OWASP Zap installation
+      # - docker pull owasp/zap2docker-stable
+      # - docker network create zapnet
+      # - docker run -u zap -p 8080:8080 -i owasp/zap2docker-stable zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true -config api.key=$docker_key &
+      # - docker network connect zapnet zap
+      # # For generated reports
+      # - mkdir reports
 
   build:
     on-failure: ABORT
@@ -46,23 +43,23 @@ phases:
       - terraform init
       - terraform plan -out=plan.out
       - terraform-compliance -p plan.out > reports/terraform-report.txt
-      # Anchore scan
-      - docker build -t example-code
-      - docker run example-code --net zapnet
-      - anchore-cli image add example-code
-      - anchore-cli image wait example-code
-      - anchore-cli image vuln example-code os
-      - anchore-cli get example-code > reports/anchore-report.txt
-      # SonarQube scan
-      - mvn test     
-      - mvn sonar:sonar -Dsonar.login=$LOGIN -Dsonar.host.url=$HOST -Dsonar.projectKey=$Project -Dsonar.organization=$Organization
-      - sleep 5
-      - curl https://sonarcloud.io/api/qualitygates/project_status?projectKey=$Project > reports/sonarqube-report.json
-      - if [ $(jq -r '.projectStatus.status' result.json) = ERROR ] ; then $CODEBUILD_BUILD_SUCCEEDING -eq 0 ;fi
-      # OWASP Zap scan
-      - id=$(docker inspect --format="{{.Id}}" example-code)
-      - ip=$(docker inspect <CONTAINER ID> | grep IPAddress)
-      - docker run -t owasp/zap2docker-stable zap-full-scan.py -t https://$ip > reports/owasp-report.txt
+      # # Anchore scan
+      # - docker build -t example-code
+      # - docker run example-code --net zapnet
+      # - anchore-cli image add example-code
+      # - anchore-cli image wait example-code
+      # - anchore-cli image vuln example-code os
+      # - anchore-cli get example-code > reports/anchore-report.txt
+      # # SonarQube scan
+      # - mvn test     
+      # - mvn sonar:sonar -Dsonar.login=$LOGIN -Dsonar.host.url=$HOST -Dsonar.projectKey=$Project -Dsonar.organization=$Organization
+      # - sleep 5
+      # - curl https://sonarcloud.io/api/qualitygates/project_status?projectKey=$Project > reports/sonarqube-report.json
+      # - if [ $(jq -r '.projectStatus.status' result.json) = ERROR ] ; then $CODEBUILD_BUILD_SUCCEEDING -eq 0 ;fi
+      # # OWASP Zap scan
+      # - id=$(docker inspect --format="{{.Id}}" example-code)
+      # - ip=$(docker inspect <CONTAINER ID> | grep IPAddress)
+      # - docker run -t owasp/zap2docker-stable zap-full-scan.py -t https://$ip > reports/owasp-report.txt
 artifacts:
   name: reports
   files:
