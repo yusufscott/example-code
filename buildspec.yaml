@@ -42,7 +42,7 @@ phases:
       # terraform-compliance scan
       - terraform init
       - terraform plan -out=plan.out
-      - terraform-compliance -p plan.out > reports/terraform-report.txt
+      - terraform-compliance -f git:https://github.com/terraform-compliance/user-friendly-features.git -p plan.out > reports/terraform-report.txt
       # # Anchore scan
       # - docker build -t example-code
       # - docker run example-code --net zapnet
