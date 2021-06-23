@@ -20,9 +20,9 @@ phases:
       - apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
       - apt-get update && apt-get install terraform -y
       - pip install terraform-compliance
-      # # Grype installation
-      # - curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
-      # # SonarQube installation
+      # Grype installation
+      - curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+      # SonarQube installation
       # - apt-get install -y jq
       # - wget http://www-eu.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz
       # - tar xzf apache-maven-3.5.4-bin.tar.gz
@@ -43,13 +43,9 @@ phases:
       - terraform init
       - terraform plan -out=plan.out
       - terraform-compliance -f git:https://github.com/terraform-compliance/user-friendly-features.git -p plan.out > reports/terraform-report.txt
-      # # Anchore scan
-      # - docker build -t example-code
-      # - docker run example-code --net zapnet
-      # - anchore-cli image add example-code
-      # - anchore-cli image wait example-code
-      # - anchore-cli image vuln example-code os
-      # - anchore-cli get example-code > reports/anchore-report.txt
+      # Grype scan
+      - docker build
+      - docker ps
       # # SonarQube scan
       # - mvn test     
       # - mvn sonar:sonar -Dsonar.login=$LOGIN -Dsonar.host.url=$HOST -Dsonar.projectKey=$Project -Dsonar.organization=$Organization
