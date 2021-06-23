@@ -2,8 +2,8 @@ version: 0.2
 #trigger!
 env:
   secrets-manager:
-    #DOCKER_PASSWORD: "docker-login:password"
-    #DOCKER_USER: "docker-login:username"
+    DOCKER_PASSWORD: "docker-credentials:password"
+    DOCKER_USER: "docker-credentials:username"
     docker_key: "docker-key:access_key"
     LOGIN: "yusufscott/example-code:token"
     HOST: "yusufscott/example-code:host"
@@ -14,6 +14,7 @@ phases:
     commands:
       # For generated reports
       - mkdir reports
+      - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
       # terraform-compliance installation
       - apt-get update && apt-get install -y gnupg software-properties-common curl
       - curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
@@ -44,8 +45,7 @@ phases:
       - terraform plan -out=plan.out
       - terraform-compliance -f git:https://github.com/terraform-compliance/user-friendly-features.git -p plan.out > reports/terraform-report.txt
       # Grype scan
-      - docker build .
-      - docker ps
+      - docker build
       # # SonarQube scan
       # - mvn test     
       # - mvn sonar:sonar -Dsonar.login=$LOGIN -Dsonar.host.url=$HOST -Dsonar.projectKey=$Project -Dsonar.organization=$Organization
