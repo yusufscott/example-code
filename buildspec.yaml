@@ -40,6 +40,7 @@ phases:
     on-failure: ABORT
     commands:
       # terraform-compliance scan
+      - terraform init
       - terraform plan -out=plan.out
       - terraform-compliance -p plan.out > reports/terraform-report.txt
       # Anchore scan
