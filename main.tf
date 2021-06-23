@@ -2,20 +2,20 @@ provider "aws" {
     region = "us-west-2"
 }
 
-resource "aws_kms_key" "audit_key" {
-    description = "Key for encrypting audit pipeline resources"
-}
+# resource "aws_kms_key" "audit_key" {
+#     description = "Key for encrypting audit pipeline resources"
+# }
 
-resource "aws_secretsmanager_secret" "docker_login" {
-    name = "docker-login"
-    description = "Used to log into docker"
-    kms_key_id = aws_kms_key.audit_key.key_id
-}
+# resource "aws_secretsmanager_secret" "docker_login" {
+#     name = "docker-login"
+#     description = "Used to log into docker"
+#     kms_key_id = aws_kms_key.audit_key.key_id
+# }
 
-resource "aws_secretsmanager_secret_version" "docker_creds" {
-    secret_id = aws_secretsmanager_secret.docker_login.id
-    secret_string = jsonencode(var.docker_creds)
-}
+# resource "aws_secretsmanager_secret_version" "docker_creds" {
+#     secret_id = aws_secretsmanager_secret.docker_login.id
+#     secret_string = jsonencode(var.docker_creds)
+# }
 
 resource "aws_s3_bucket" "audit_report_bucket" {
     bucket = "yusufs-audit-report-bucket"
