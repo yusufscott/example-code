@@ -42,8 +42,6 @@ phases:
       # terraform-compliance scan
       - terraform init
       - terraform plan -out=plan.out
-      - terraform plan -json
-      - terraform-compliance -f git:https://github.com/terraform-compliance/user-friendly-features.git -p plan.out
       - terraform-compliance -f git:https://github.com/terraform-compliance/user-friendly-features.git -p plan.out > reports/terraform-report.txt
       # # Anchore scan
       # - docker build -t example-code
