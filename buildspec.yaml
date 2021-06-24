@@ -43,7 +43,7 @@ phases:
       # terraform-compliance scan
       - terraform init
       - terraform plan -out=plan.out
-      - terraform-compliance -f git:https://github.com/terraform-compliance/user-friendly-features.git -p plan.out > reports/terraform-report.txt
+      #- terraform-compliance -f git:https://github.com/terraform-compliance/user-friendly-features.git -p plan.out > reports/terraform-report.txt
       # Grype scan
       - export imageid=$(docker build . | grep Successfully | awk '{print $3}')
       - grype $imageid > reports/grype-report.txt
@@ -59,7 +59,7 @@ phases:
       - echo $id
       - docker inspect $id
       - ip=$(docker inspect $id | grep IPAddress)
-      - docker run -t owasp/zap2docker-stable zap-full-scan.py -t https://$ip > reports/owasp-report.txt
+      - docker run --network="zapnet" -t owasp/zap2docker-stable zap-full-scan.py -t https://$ip > reports/owasp-report.txt
 artifacts:
   name: reports
   files:
