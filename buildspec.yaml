@@ -32,10 +32,10 @@ phases:
       - unzip ./sonar-scanner-cli-3.3.0.1492-linux.zip
       - export PATH=$PATH:/sonar-scanner-3.3.0.1492-linux/bin/
       # OWASP Zap installation
-      # - docker pull owasp/zap2docker-stable
-      # - docker network create zapnet
-      # - docker run -u zap -p 8080:8080 -i owasp/zap2docker-stable zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true -config api.key=$docker_key &
-      # - docker network connect zapnet zap
+      - docker pull owasp/zap2docker-stable
+      - docker network create zapnet
+      - docker run -u zap -p 8080:8080 -i owasp/zap2docker-stable zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true -config api.key=$docker_key &
+      - docker network connect zapnet zap
 
   build:
     on-failure: ABORT
@@ -53,10 +53,10 @@ phases:
       - sleep 5
       - curl https://sonarcloud.io/api/qualitygates/project_status?projectKey=$Project > reports/sonarqube-report.json
       - if [ $(jq -r '.projectStatus.status' sonarqube-report.json) = ERROR ] ; then $CODEBUILD_BUILD_SUCCEEDING -eq 0 ;fi
-      # # OWASP Zap scan
-      # - id=$(docker inspect --format="{{.Id}}" example-code)
-      # - ip=$(docker inspect <CONTAINER ID> | grep IPAddress)
-      # - docker run -t owasp/zap2docker-stable zap-full-scan.py -t https://$ip > reports/owasp-report.txt
+      # OWASP Zap scan
+      - id=$(docker inspect --format="{{.Id}}" example-code)
+      - ip=$(docker inspect <CONTAINER ID> | grep IPAddress)
+      - docker run -t owasp/zap2docker-stable zap-full-scan.py -t https://$ip > reports/owasp-report.txt
 artifacts:
   name: reports
   files:
