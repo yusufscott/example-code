@@ -5,10 +5,10 @@ env:
     DOCKER_PASSWORD: "docker-credentials:password"
     DOCKER_USER: "docker-credentials:username"
     docker_key: "docker-key:access_key"
-    LOGIN: "yusufscott/example-code:token"
-    HOST: "yusufscott/example-code:host"
-    Organization: "yusufscott/example-code:organization"
-    Project: "yusufscott/example-code:project"
+    LOGIN: "yusufscott/example-code:SONAR_TOKEN"
+    HOST: "yusufscott/example-code:HOST"
+    Organization: "yusufscott/example-code:Organization"
+    Project: "yusufscott/example-code:Project"
 phases:
   install:
     commands:
