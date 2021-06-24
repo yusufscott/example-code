@@ -21,6 +21,9 @@ provider "aws" {
 resource "aws_s3_bucket" "audit_report_log_bucket" {
   bucket = "yusufs-audit-report-log-bucket"
   acl    = "log-delivery-write"
+  versioning {
+    enabled = true
+  }
 
   server_side_encryption_configuration {
     rule {
