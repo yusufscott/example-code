@@ -54,7 +54,7 @@ phases:
       - curl https://sonarcloud.io/api/qualitygates/project_status?projectKey=$Project > reports/sonarqube-report.json
       - if [ $(jq -r '.projectStatus.status' reports/sonarqube-report.json) = ERROR ] ; then $CODEBUILD_BUILD_SUCCEEDING -eq 0 ;fi
       # OWASP Zap scan
-      - docker run -d --network="zapnet" -i $imageid
+      - docker run -d --network="zapnet" -i $imageid -p 80:80
       - id=$(docker inspect --format="{{.Id}}" $imageid)
       - echo $id
       - docker inspect $id
