@@ -56,6 +56,7 @@ phases:
       # OWASP Zap scan
       - id=$(docker inspect --format="{{.Id}}" $imageid)
       - echo $id
+      - docker inspect $id
       - ip=$(docker inspect $id | grep IPAddress)
       - docker run -t owasp/zap2docker-stable zap-full-scan.py -t https://$ip > reports/owasp-report.txt
 artifacts:
