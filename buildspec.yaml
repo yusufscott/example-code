@@ -48,7 +48,7 @@ phases:
       - export imageid=$(docker build . | grep Successfully | awk '{print $3}')
       - grype $imageid > reports/grype-report.txt
       # SonarQube scan
-      - mvn test     
+      #- mvn test     
       - mvn sonar:sonar -Dsonar.login=$LOGIN -Dsonar.host.url=$HOST -Dsonar.projectKey=$Project -Dsonar.organization=$Organization
       - sleep 5
       - curl https://sonarcloud.io/api/qualitygates/project_status?projectKey=$Project > reports/sonarqube-report.json
