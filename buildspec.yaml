@@ -23,7 +23,7 @@ phases:
       - pip install terraform-compliance
       # Grype installation
       - curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
-      # SonarQube installation
+      # SonarCloud installation
       - apt-get install -y jq
       - wget http://www-eu.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz
       - tar xzf apache-maven-3.5.4-bin.tar.gz
@@ -47,8 +47,7 @@ phases:
       # Grype scan
       - export imageid=$(docker build . | grep Successfully | awk '{print $3}')
       - grype $imageid > reports/grype-report.txt
-      # SonarQube scan
-      #- mvn test     
+      # SonarCloud scan
       - mvn sonar:sonar -Dsonar.login=$LOGIN -Dsonar.host.url=$HOST -Dsonar.projectKey=$Project -Dsonar.organization=$Organization
       - sleep 5
       - curl https://sonarcloud.io/api/qualitygates/project_status?projectKey=$Project > reports/sonarqube-report.json
