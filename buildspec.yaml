@@ -55,6 +55,7 @@ phases:
       - if [ $(jq -r '.projectStatus.status' reports/sonarqube-report.json) = ERROR ] ; then $CODEBUILD_BUILD_SUCCEEDING -eq 0 ;fi
       # OWASP Zap scan
       - docker run -t -p 80:8080 --rm -d --network="zapnet" -i $imageid
+      - docker ps
       - id=$(docker inspect --format="{{.Id}}" $imageid)
       - echo $id
       - docker inspect $id
