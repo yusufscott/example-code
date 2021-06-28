@@ -56,6 +56,7 @@ phases:
       # OWASP Zap scan
       - docker run -t -p 80:8080 --rm -d --network="zapnet" -i $imageid
       - docker ps
+      - echo $imageid
       - id=$(docker inspect --format="{{.Id}}" $imageid)
       - echo $id
       - docker inspect $id
