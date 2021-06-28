@@ -1,4 +1,5 @@
 version: 0.2
+#trigger
 env:
   secrets-manager:
     DOCKER_PASSWORD: "docker-credentials:password"
@@ -38,12 +39,14 @@ phases:
   build:
     on-failure: ABORT
     commands:
+      # build and run test image
+      - imageid=$(docker build . | grep Successfully | awk '{print $3}')
+      - containerid=$(docker run -t -p 80:8080 --rm -d --network="zapnet" -i $imageid)
       # terraform-compliance scan
       - terraform init
       - terraform plan -out=plan.out
       - terraform-compliance -f git:https://github.com/terraform-compliance/user-friendly-features.git -p plan.out > reports/terraform-report.txt
       # Grype scan
-      - export imageid=$(docker build . | grep Successfully | awk '{print $3}')
       - grype $imageid > reports/grype-report.txt
       # SonarCloud scan
       - mvn sonar:sonar -Dsonar.login=$LOGIN -Dsonar.host.url=$HOST -Dsonar.projectKey=$Project -Dsonar.organization=$Organization
@@ -51,9 +54,8 @@ phases:
       - curl https://sonarcloud.io/api/qualitygates/project_status?projectKey=$Project > reports/sonarqube-report.json
       - if [ $(jq -r '.projectStatus.status' reports/sonarqube-report.json) = ERROR ] ; then $CODEBUILD_BUILD_SUCCEEDING -eq 0 ;fi
       # OWASP Zap scan
-      - id=$(docker run -t -p 80:8080 --rm -d --network="zapnet" -i $imageid)
-      - ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $id)
-      - docker run --network="zapnet" -t owasp/zap2docker-stable zap-baseline.py -t https://$ip > reports/owasp-report.txt
+      - containerip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $containerid)
+      - docker run --network="zapnet" -t owasp/zap2docker-stable zap-baseline.py -t https://$containerip > reports/owasp-report.txt
 artifacts:
   name: reports
   files:
