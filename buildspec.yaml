@@ -54,7 +54,8 @@ phases:
       # - if [ $(jq -r '.projectStatus.status' reports/sonarqube-report.json) = ERROR ] ; then $CODEBUILD_BUILD_SUCCEEDING -eq 0 ;fi
       # OWASP Zap scan
       - containerip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $containerid)
-      - docker run --network="zapnet" -t owasp/zap2docker-stable zap-baseline.py -t https://$containerip > reports/owasp-report.txt
+      - docker run --network="zapnet" -t owasp/zap2docker-stable zap-baseline.py -t https://$containerip
+      # - docker run --network="zapnet" -t owasp/zap2docker-stable zap-baseline.py -t https://$containerip > reports/owasp-report.txt
 artifacts:
   name: reports
   files:
