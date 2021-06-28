@@ -58,6 +58,8 @@ phases:
       - id=$(docker inspect --format="{{.Id}}" $imageid)
       - echo $id
       - docker inspect $id
+      - docker network ls
+      - docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $id
       - ip=$(docker inspect $id | grep IPAddress)
       - docker run --network="zapnet" -t owasp/zap2docker-stable zap-full-scan.py -t https://$ip > reports/owasp-report.txt
 artifacts:
