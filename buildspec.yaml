@@ -40,7 +40,7 @@ phases:
     commands:
       # build and run test image
       - imageid=$(docker build . | grep Successfully | awk '{print $3}')
-      - containerid=$(docker run -t -p 80:8080 --rm -d --network="zapnet" -i $imageid)
+      - containerid=$(docker run -t -p 80:8080 --rm -d --network="zapnet" $imageid)
       # # terraform-compliance scan
       # - terraform init
       # - terraform plan -out=plan.out
