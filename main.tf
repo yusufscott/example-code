@@ -3,24 +3,30 @@ provider "aws" {
     #profile = "vr"
 }
 
-# resource "aws_kms_key" "audit_key" {
-#     description = "Key for encrypting audit pipeline resources"
-# }
+resource "aws_secretsmanager_secret" "docker_login" {
+    name = "vr/docker-login"
+    description = "Used to log into Docker Hub"
+}
 
-# resource "aws_secretsmanager_secret" "docker_login" {
-#     name = "docker-login"
-#     description = "Used to log into docker"
-#     kms_key_id = aws_kms_key.audit_key.key_id
-# }
+resource "aws_secretsmanager_secret_version" "docker_login" {
+    secret_id = aws_secretsmanager_secret.docker_login.id
+    secret_string = jsonencode(var.docker_credentials)
+}
 
-# resource "aws_secretsmanager_secret_version" "docker_creds" {
-#     secret_id = aws_secretsmanager_secret.docker_login.id
-#     secret_string = jsonencode(var.docker_creds)
-# }
+resource "aws_secretsmanager_secret" "sc_login" {
+    name = "vr/sc-login"
+    description = "Used to log into SonarCloud"
+}
+
+resource "aws_secretsmanager_secret_version" "sc_login" {
+    secret_id = aws_secretsmanager_secret.sc_login.id
+    secret_string = jsonencode(var.sc_credentials)
+}
 
 resource "aws_s3_bucket" "audit_report_log_bucket" {
   bucket = "yusufs-audit-report-log-bucket"
   acl    = "log-delivery-write"
+  force_destroy = true
   versioning {
     enabled = true
   }
@@ -37,6 +43,7 @@ resource "aws_s3_bucket" "audit_report_log_bucket" {
 resource "aws_s3_bucket" "audit_report_bucket" {
     bucket = "yusufs-audit-report-bucket"
     acl = "private"
+    force_destroy = true
     versioning {
         enabled = true
     }
