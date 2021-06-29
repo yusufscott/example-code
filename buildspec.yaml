@@ -1,12 +1,12 @@
 version: 0.2
 env:
   secrets-manager:
-    DOCKER_PASSWORD: "docker-credentials:password"
-    DOCKER_USER: "docker-credentials:username"
-    LOGIN: "vr/example-code:SONAR_TOKEN"
-    HOST: "vr/example-code:HOST"
-    Organization: "vr/example-code:Organization"
-    Project: "vr/example-code:Project"
+    DOCKER_PASSWORD: "vr/docker-login:password"
+    DOCKER_USER: "vr/docker-login:username"
+    LOGIN: "vr/sc-login:SONAR_TOKEN"
+    HOST: "vr/sc-login:HOST"
+    Organization: "vr/sc-login:Organization"
+    Project: "vr/sc-login:Project"
 phases:
   install:
     commands:
