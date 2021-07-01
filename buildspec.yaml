@@ -1,24 +1,18 @@
 version: 0.2
 env:
   secrets-manager:
-    DOCKER_PASSWORD: "vr/docker-login:password"
-    DOCKER_USER: "vr/docker-login:username"
-    LOGIN: "vr/sc-login:SONAR_TOKEN"
-    HOST: "vr/sc-login:HOST"
-    Organization: "vr/sc-login:Organization"
-    Project: "vr/sc-login:Project"
+    DOCKER_PASSWORD: "VR/docker-login:password"
+    DOCKER_USER: "VR/docker-login:username"
+    LOGIN: "VR/sc-login:SONAR_TOKEN"
+    HOST: "VR/sc-login:HOST"
+    Organization: "VR/sc-login:Organization"
+    Project: "VR/sc-login:Project"
 phases:
   install:
     commands:
       # For generated reports
       - mkdir reports
       - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-      # terraform-compliance installation
-      - apt-get update && apt-get install -y gnupg software-properties-common curl
-      - curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
-      - apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-      - apt-get update && apt-get install terraform=1.0.0 -y
-      - pip install terraform-compliance
       # Grype installation
       - curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
       # SonarCloud installation
@@ -41,15 +35,13 @@ phases:
       - imageid=$(docker build . | grep Successfully | awk '{print $3}')
       - containerid=$(docker run -t -p 80:8080 --rm -d --network="zapnet" $imageid)
       # terraform-compliance scan
-      - terraform init
-      - terraform plan -out=plan.out
-      - terraform-compliance -f git:https://github.com/terraform-compliance/user-friendly-features.git -p plan.out > reports/terraform-report.txt
+      - python3 lib/terraform-compliance.py
       # Grype scan
       - grype $imageid > reports/grype-report.txt
       # SonarCloud scan
       - mvn sonar:sonar -Dsonar.login=$LOGIN -Dsonar.host.url=$HOST -Dsonar.projectKey=$Project -Dsonar.organization=$Organization
       - sleep 5
-      - curl https://sonarcloud.io/api/qualitygates/project_status?projectKey=$Project > reports/sonarqube-report.json
+      - curl https://sonarcloud.io/api/qualitygates/project_status?projectKey=$Project | jq . > reports/sonarqube-report.json
       - if [ $(jq -r '.projectStatus.status' reports/sonarqube-report.json) = ERROR ] ; then $CODEBUILD_BUILD_SUCCEEDING -eq 0 ;fi
       # OWASP Zap scan
       - containerip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $containerid)
